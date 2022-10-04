@@ -43,3 +43,19 @@ func GetUser(c *fiber.Ctx) error {
 
 	return c.JSON(user)
 }
+
+func UpdateUser(c *fiber.Ctx) error {
+	id, _ := strconv.Atoi(c.Params("id"))
+
+	user := models.User{
+		Id: uint(id),
+	}
+
+	if err := c.BodyParser(&user); err != nil {
+		return err
+	}
+
+	database.DB.Model(&user).Updates(user)
+
+	return c.JSON(user)
+}
