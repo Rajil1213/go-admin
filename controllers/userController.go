@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/Rajil1213/go-admin/database"
+	"github.com/Rajil1213/go-admin/middlewares"
 	"github.com/Rajil1213/go-admin/models"
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,13 +12,19 @@ import (
 const DefaultPassword = "changeme"
 
 func AllUsers(c *fiber.Ctx) error {
+	if err := middlewares.IsAuthorized(c, "users"); err != nil {
+		return err
+	}
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
 	return c.JSON(models.Paginate(database.DB, &models.User{}, page))
 }
 
+/* This function is for when a registered user creates another user */
 func CreateUser(c *fiber.Ctx) error {
-	/* This function is for when a registered user creates another user */
+	if err := middlewares.IsAuthorized(c, "users"); err != nil {
+		return err
+	}
 	var user models.User
 
 	if err := c.BodyParser(&user); err != nil {
