@@ -39,6 +39,7 @@ func (order *Order) Take(db *gorm.DB, offset int, limit int) interface{} {
 		for _, orderItem := range orders[i].OrderItems {
 			total += orderItem.Price * float32(orderItem.Quantity)
 		}
+		// frontend will require this later
 		orders[i].Total = total
 	}
 	return orders
