@@ -132,6 +132,76 @@ func Logout(c *fiber.Ctx) error {
 	})
 }
 
+// update body data
+type UpdateBodyData struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+}
+
+func UpdateInfo(c *fiber.Ctx) error {
+	var data UpdateBodyData
+
+	if err := c.BodyParser(&data); err != nil {
+		c.SendStatus(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	cookie := c.Cookies("jwt")
+	id, _ := util.ParseJwt(cookie)
+	userId, _ := strconv.Atoi(id)
+
+	user := models.User{
+		Id:        uint(userId),
+		FirstName: data.FirstName,
+		Lastname:  data.LastName,
+		Email:     data.Email,
+	}
+
+	database.DB.Model(&user).Updates(&user)
+
+	return c.JSON(user)
+}
+
+// update password body
+type UpdatePasswordBody struct {
+	Password        string `json:"password"`
+	PasswordConfirm string `json:"password_confirm"`
+}
+
+func UpdatePassword(c *fiber.Ctx) error {
+	var data UpdatePasswordBody
+
+	if err := c.BodyParser(&data); err != nil {
+		c.SendStatus(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if data.Password != data.PasswordConfirm {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": "Passwords do not match",
+		})
+	}
+
+	cookie := c.Cookies("jwt")
+	id, _ := util.ParseJwt(cookie)
+	userId, _ := strconv.Atoi(id)
+
+	user := models.User{
+		Id: uint(userId),
+	}
+	user.SetPassword(data.Password)
+
+	database.DB.Model(&user).Updates(user)
+
+	return c.JSON(user)
+}
+
 func Hello(c *fiber.Ctx) error {
 	return c.SendString("Hello, World 👋!")
 }
