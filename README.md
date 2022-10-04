@@ -6,18 +6,6 @@ A simple backend app/API that lets you create/manage users, products and their o
 This directory contains the codes that handle all operations on specific database models
 
 ### [authController.go](./controllers/authController.go)
-<style>
-    th, .function, .api-endpoint, .method{
-        text-align: center;
-    }
-    .description, .body-params{
-        text-align: left;
-    }
-    .description {
-        width: 15em;
-
-    }
-</style>
 <table>
 <tr>
     <th>Function</th>
