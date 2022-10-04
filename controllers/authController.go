@@ -40,6 +40,7 @@ func Register(c *fiber.Ctx) error {
 		FirstName: data.FirstName,
 		Lastname:  data.LastName,
 		Email:     data.Email,
+		RoleId:    3,
 	}
 
 	user.SetPassword(data.Password)
