@@ -11,17 +11,36 @@ import (
 func AllRoles(c *fiber.Ctx) error {
 	var roles []models.Role
 
-	database.DB.Find(&roles)
+	database.DB.Preload("Permissions").Find(&roles)
 
 	return c.JSON(roles)
 }
 
+// Data Transfer Object
+type RoleCreateDTO struct {
+	Name        string `json:"name"`
+	Permissions []uint `json:"permissions"`
+}
+
 func CreateRole(c *fiber.Ctx) error {
 	/* This function is for when a registered user creates another user */
-	var role models.Role
+	var roleDto RoleCreateDTO
 
-	if err := c.BodyParser(&role); err != nil {
+	if err := c.BodyParser(&roleDto); err != nil {
 		return err
+	}
+
+	permissions := make([]models.Permission, len(roleDto.Permissions))
+
+	for i, permId := range roleDto.Permissions {
+		permissions[i] = models.Permission{
+			Id: permId,
+		}
+	}
+
+	role := models.Role{
+		Name:        roleDto.Name,
+		Permissions: permissions,
 	}
 
 	database.DB.Create(&role)
@@ -36,7 +55,7 @@ func GetRole(c *fiber.Ctx) error {
 		Id: uint(id),
 	}
 
-	database.DB.Find(&role)
+	database.DB.Preload("Permission").Find(&role)
 
 	return c.JSON(role)
 }
@@ -44,12 +63,23 @@ func GetRole(c *fiber.Ctx) error {
 func UpdateRole(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
 
-	role := models.Role{
-		Id: uint(id),
+	var roleDto RoleCreateDTO
+
+	if err := c.BodyParser(&roleDto); err != nil {
+		return err
 	}
 
-	if err := c.BodyParser(&role); err != nil {
-		return err
+	permissions := make([]models.Permission, len(roleDto.Permissions))
+	for i, permId := range roleDto.Permissions {
+		permissions[i] = models.Permission{
+			Id: permId,
+		}
+	}
+
+	role := models.Role{
+		Id:          uint(id),
+		Name:        roleDto.Name,
+		Permissions: permissions,
 	}
 
 	database.DB.Model(&role).Updates(role)
