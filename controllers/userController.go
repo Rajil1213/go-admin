@@ -59,3 +59,17 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	return c.JSON(user)
 }
+
+func DeleteUser(c *fiber.Ctx) error {
+	id, _ := strconv.Atoi(c.Params("id"))
+
+	user := models.User{
+		Id: uint(id),
+	}
+
+	database.DB.Delete(&user)
+
+	return c.JSON(fiber.Map{
+		"message": "Success",
+	})
+}
