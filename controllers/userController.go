@@ -4,7 +4,6 @@ import (
 	"github.com/Rajil1213/go-admin/database"
 	"github.com/Rajil1213/go-admin/models"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 const DefaultPassword = "changeme"
@@ -25,10 +24,7 @@ func CreateUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	// default user password
-	password, _ := bcrypt.GenerateFromPassword([]byte(DefaultPassword), 14)
-	user.Password = password
-
+	user.SetPassword(DefaultPassword)
 	database.DB.Create(&user)
 
 	return c.JSON(user)

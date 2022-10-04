@@ -1,9 +1,22 @@
 package models
 
+import (
+	"golang.org/x/crypto/bcrypt"
+)
+
 type User struct {
 	Id        uint   `json:"id"`
 	FirstName string `json:"first_name"`
 	Lastname  string `json:"last_name"`
 	Email     string `gorm:"unique" json:"email"`
 	Password  []byte `json:"-"`
+}
+
+func (user *User) SetPassword(password string) {
+	password_hash, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	user.Password = password_hash
+}
+
+func (user *User) CheckPassword(password string) error {
+	return bcrypt.CompareHashAndPassword(user.Password, []byte(password))
 }
