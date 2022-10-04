@@ -18,6 +18,8 @@ func Setup(app *fiber.App) {
 	app.Post("/api/logout", controllers.Logout)
 	app.Get("/", controllers.Hello)
 
+	// User CRUD
 	app.Get("/api/users", controllers.AllUsers)
 	app.Post("/api/users", controllers.CreateUser)
+	app.Get("/api/users/:id", controllers.GetUser)
 }
