@@ -31,4 +31,6 @@ func Setup(app *fiber.App) {
 	app.Get("/api/roles/:id", controllers.GetRole)       // R
 	app.Put("/api/roles/:id", controllers.UpdateRole)    // U
 	app.Delete("/api/roles/:id", controllers.DeleteRole) // D
+
+	app.Get("/api/permissions", controllers.AllPermissions)
 }
