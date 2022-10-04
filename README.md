@@ -1,3 +1,11 @@
+# Go Admin App
+A simple backend app/API that lets you create/manage users, products and their orders. Source code is based on [this Udemy course](https://udemy.com/course/the-complete-react-golang-course). The server runs on port 3000 and depends on a MySQL database.
+
+# Code Structure
+## [controllers](./controllers)
+This directory contains the codes that handle all operations on specific database models
+
+### [authController.go](./controllers/authController.go)
 <style>
     th, .function, .api-endpoint, .method{
         text-align: center;
@@ -10,16 +18,6 @@
 
     }
 </style>
-
-# Go Admin App
-A simple backend app/API that lets you create/manage users, products and their orders. Source code is based on [this Udemy course](https://udemy.com/course/the-complete-react-golang-course). The server runs on port 3000 and depends on a MySQL database.
-
-# Code Structure
-## [controllers](./controllers)
-This directory contains the codes that handle all operations on specific database models
-
-### [authController.go](./controllers/authController.go)
-
 <table>
 <tr>
     <th>Function</th>
