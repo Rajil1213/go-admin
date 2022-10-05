@@ -1,11 +1,24 @@
 # Go Admin App
 A simple backend app/API that lets you create/manage users, products and their orders. Source code is based on [this Udemy course](https://udemy.com/course/the-complete-react-golang-course). The server runs on port 3000 and depends on a MySQL database.
 
+# How to Run?
+* Directly
+  ```sh
+  go run main.go
+  ```
+* With [Realize](https://github.com/oxequa/realize)
+  ```sh
+  realize start
+  ```
+
+# Resources
+* [PostmanAPICollection](./GoAdmin.postman_collection.json)
+  - The collection of Postman API calls for testing/configuring.
 # Code Structure
 ## [controllers](./controllers)
 This directory contains the codes that handle all operations on specific database models
 
-### [authController.go](./controllers/authController.go)
+### [authController](./controllers/authController.go)
 <table>
 <tr>
     <th>Function</th>
@@ -420,3 +433,79 @@ This directory contains the codes that handle all operations on specific databas
 <!-- Data Ends -->
 </table>
 
+## [database](./database/)
+
+This directory contains a single file [connect.go](./database/connect.go) that is responsible for:
+* Connecting to the [MySQL] database
+* Creating the necessary tables during startup (if not already present).
+* Exports the database variable so that it can be imported in other packages.
+
+## [middlewares](./middlewares/)
+This directory contains codes for authentication and authorization to be used for access control across various routes.
+
+### [authMiddleware](./middlewares/authMiddleware.go)
+* Parses the `"jwt"` cookie
+* If the cookie is present and valid, it allows privileged access to private routes.
+* If the cookie is not present or is invalid, trying to access private routes results in an `UnauthorizedAccess` error.
+* This is included in [routes](./routes/route.go), placed strategically before the private routes.
+
+### [permissionMiddleware](./middlewares/permissionMiddleware.go)
+* Checks if the `jwt` token cookie is present and valid.
+* For the given `user_id` (from cookie) and for the given page, checks if the page is accessible.
+* For `GET` requests to a `page`, the user must have either `view_{page}` or `edit_{page}` access.
+* For other requests, the user must have `edit_{page}` access.
+
+## [models](./models/)
+This directory contains codes that define various database models (tables), and provides an interface for them.
+### ER Diagram:
+![](./schema.png)
+
+
+
+### [entity](./models/entity.go)
+Creates a template/interface entity with two function definitions:
+  * `Count()` that counts the number of entities in the database table.
+  * `Take()` that gets the data for the entity from the database table and paginates them.
+
+### [order](./models/order.go)
+* Defines two models, namely:
+  * `Order`: a model to store information about who ordered and when.
+  * `OrderItems`: a model to store actual ordered items, with `OrderId` to reference `Order`.
+  
+* Defines its implementations of `Count()` and `Take()` for `Order`.
+* Defines two meta fields: `Name` and `Total` that are not stored in the database but are returned during the call to `Take()` to be used by the frontend later.
+
+### [paginate](./models/paginate.go)
+Defines functionality to paginate the list of entities to be used by controllers during `GET` requests.
+
+### [permission](./models/permission.go)
+Defines the `Permission` model to handle permission types.
+
+### [product](./models/product.go)
+Defines the `Product` model and its implementation of `Count()` and `Take()`
+
+### [role](./models/role.go)
+Defines the `Role` model with a many-to-many relationship with the `Permission` model.
+
+### [user](./models/user.go)
+* Defines the `User` model with a foreign key to `Role`
+* Implements the `Count()` and `Take()` functions
+* Implements methods to `Check` and `Set` password for the user.
+
+## [routes](./routes/)
+The directory contains a single file [route.go](./routes/route.go) that defines the various endpoints that this application supports, the associated methods as well as the functions that handle these endpoints.
+
+## [util](./util/)
+This directory contains utility/helper functions. Currently, this only contains one file [jwt.go](./util/jwt.go) that contains functions to:
+* Generate a JWT token for the logged-in user.
+* Parse the stored JWT token, determine whether it is valid, and return the issuer (`userID`) if it is.
+
+## [.realize.yml](./.realize.yaml)
+The configuration file for `realize` that can be used to automatically restart the server when any of the code files change.
+
+## [main.go](./main.go)
+The file where the `main` package is defined. It:
+* Connects to the database.
+* Defines the `CORS` policy.
+* Sets up routes that this application supports.
+* Starts the server at port 3000.
