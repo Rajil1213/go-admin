@@ -4,10 +4,12 @@ A simple backend app/API that lets you create/manage users, products and their o
 # How to Run?
 * Directly
   ```sh
+  export GO111MODULE=on
   go run main.go
   ```
 * With [Realize](https://github.com/oxequa/realize)
   ```sh
+  export GO111MODULE=on
   realize start
   ```
 
