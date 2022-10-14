@@ -321,7 +321,8 @@ This directory contains the codes that handle all operations on specific databas
     <pre class="body-params">
     json
     {
-        "name": "Administrator"
+        "name": "Administrator",
+        "permissions": [1, 2, 3, 7]
     }
     </pre>
     </td>
