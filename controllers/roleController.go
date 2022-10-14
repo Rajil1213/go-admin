@@ -94,7 +94,10 @@ func DeleteRole(c *fiber.Ctx) error {
 		Id: uint(id),
 	}
 
-	database.DB.Delete(&role)
+	// first clear associations to the Permission Array (fk_constraint)
+	database.DB.Model(&role).Association("Permissions").Clear()
+	// then delete the `role`
+	database.DB.Model(&role).Delete(&role)
 
 	return c.JSON(fiber.Map{
 		"message": "Success",
