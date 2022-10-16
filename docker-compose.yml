@@ -4,6 +4,7 @@ services:
     build: .
     ports:
       - 8000:3000
+    image: admin-back
     environment:
       # access these from .env
       - DB_HOST=$DB_HOST 
