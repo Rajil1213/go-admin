@@ -4,6 +4,14 @@ services:
     build: .
     ports:
       - 8000:3000
+    environment:
+      # access these from .env
+      - DB_HOST=$DB_HOST 
+      - DB_PORT=3306
+      - DB_DATABASE=$DB_DATABASE
+      - DB_USERNAME=$DB_USERNAME
+      - DB_PASSWORD=$DB_PASSWORD
+      - SECRET_KEY=$SECRET_KEY
     extra_hosts:
       # this is required for connecting to the MySQL server on the host
       - "host.docker.internal:host-gateway"    
