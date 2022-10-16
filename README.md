@@ -12,6 +12,10 @@ A simple backend app/API that lets you create/manage users, products and their o
   export GO111MODULE=on
   realize start
   ```
+* In Docker (runs on port 8000 on the host)
+  ```sh
+  docker-compose up --build
+  ```
 
 # Resources
 * [PostmanAPICollection](./GoAdmin.postman_collection.json)
