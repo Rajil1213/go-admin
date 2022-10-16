@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  admin-back:
+    build: .
+    ports:
+      - 8000:3000
+    extra_hosts:
+      # this is required for connecting to the MySQL server on the host
+      - "host.docker.internal:host-gateway"    
