@@ -1,12 +1,11 @@
 package util
 
 import (
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
-
-const SecretKey = "secret"
 
 func GenerateJwt(issuer string) (string, error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
@@ -14,12 +13,12 @@ func GenerateJwt(issuer string) (string, error) {
 		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	return claims.SignedString([]byte(SecretKey))
+	return claims.SignedString([]byte(os.Getenv("SECRET_KEY")))
 }
 
 func ParseJwt(cookie string) (string, error) {
 	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
-		return []byte(SecretKey), nil
+		return []byte(os.Getenv("SECRET_KEY")), nil
 	})
 
 	if err != nil || !token.Valid {
